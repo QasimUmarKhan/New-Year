@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .card {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+      }
+
+      .sky {
+        width: 100%;
+        height: 100%;
+        background-color: #0f2c5c;
+        position: relative;
+      }
+
+      .fireworks-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .message {
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        z-index: 1;
+        line-height: 1.5em;
+        letter-spacing: 0.1em;
+      }
+
+      .message-box {
+        border-radius: 10px;
+        box-shadow: 0 12px 18px rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        background: transparent;
+      }
+
+      #countdown {
+        text-align: center;
+        font-size: 3vw;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        padding-bottom: 3vh;
+        box-sizing: border-box;
+        z-index: 1;
+        color: white;
+      }
+
+      /* Firework animations */
+      .firework {
+        position: absolute;
+        width: 2%;
+        height: 2%;
+        border-radius: 50%;
+        animation-name: firework;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+      }
+
+      @keyframes firework {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(3);
+        }
+      }
+
+      .explosion {
+        position: absolute;
+        width: 4vw;
+        height: 4vw;
+        border-radius: 50%;
+        background-color: #ffffff;
+        box-shadow: 0 0 30px #ffffff;
+        animation-name: explosion;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+      }
+
+      @keyframes explosion {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(5);
+        }
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .message {
+          top: 40%;
+          line-height: 1.2em;
+          letter-spacing: 0.2em;
+        }
+
+        .firework {
+          width: 1.5%;
+          height: 1.5%;
+        }
+
+        .explosion {
+          width: 6vw;
+          height: 6vw;
+          box-shadow: 0 0 20px #ffffff;
+        }
+
+        #countdown {
+          font-size: 5vw;
+          padding-bottom: 5vh;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .message {
+          top: 30%;
+          line-height: 1.2em;
+          letter-spacing: 0.1em;
+          width: 80vw;
+          margin: 1rem auto;
+        }
+
+        .firework {
+          width: 1%;
+          height: 1%;
+        }
+
+        .explosion {
+          width: 4vw;
+          height: 4vw;
+          box-shadow: 0 0 10px #ffffff;
+        }
+
+        #countdown {
+          font-size: 7vw;
+          padding-bottom: 7vh;
+          margin: 1em auto;
+        }
+
+        #countdown > h2 {
+          display: none;
+        }
+      }
+
+      /* Big 2025 styling */
+      #big-2025 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10vw;
+        font-weight: bold;
+        color: #ffd700;
+        text-shadow: 0 0 20px #ff4500, 0 0 40px #ff4500, 0 0 60px #ffd700;
+        opacity: 0;
+        z-index: 1000;
+      }
+
+      .animate-2025 {
+        animation: zoom-fade-in 2s ease-in-out forwards;
+      }
+
+      @keyframes zoom-fade-in {
+        0% {
+          transform: translate(-50%, -50%) scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="sky">
+        <div class="moon"></div>
+        <div class="fireworks-container"></div>
+      </div>
+      <div class="message message-box">
+        <h1>HAPPY NEW YEAR</h1>
+        <p>
+          Wishing you a prosperous and joyous New Year filled with endless
+          opportunities and cherished moments!
+        </p>
+      </div>
+      <div id="countdown">
+        <h2>Cheers to a New Year!</h2>
+        <div id="countdown-timer"></div>
+      </div>
+    </div>
+    <script>
+      // Array of firework colors
+      const colors = [
+        "#ff4500",
+        "#ffd700",
+        "#00ff00",
+        "#00ffff",
+        "#ff69b4",
+        "#1e90ff",
+      ];
+
+      // Function to generate random numbers within a range
+      function getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+      }
+
+      // Function to generate firework particles
+      function createFirework(x, y) {
+        const firework = document.createElement("div");
+        firework.classList.add("firework");
+
+        // Random firework color
+        const color = colors[getRandomNumber(0, colors.length - 1)];
+        firework.style.backgroundColor = color;
+
+        // Set initial firework position
+        firework.style.left = x + "px";
+        firework.style.top = y + "px";
+
+        // Add firework to the container
+        const container = document.querySelector(".fireworks-container");
+        container.appendChild(firework);
+
+        // Animate and remove firework after explosion
+        setTimeout(() => {
+          firework.classList.add("explosion");
+          setTimeout(() => {
+            firework.remove();
+          }, 1000);
+        }, 10);
+      }
+
+      // Fireworks container click event
+      const container = document.querySelector(".fireworks-container");
+      container.addEventListener("click", (event) => {
+        const x = event.clientX;
+        const y = event.clientY;
+        createFirework(x, y);
+      });
+
+      // Generate random fireworks every 500ms
+      setInterval(() => {
+        const x = getRandomNumber(0, window.innerWidth);
+        const y = getRandomNumber(0, window.innerHeight);
+        createFirework(x, y);
+      }, 500);
+
+      // Set the target date for countdown (local time, 12:00 AM on New Year's Day)
+      const targetDate = new Date();
+      targetDate.setFullYear(targetDate.getFullYear() + 1); // Next year
+      targetDate.setMonth(0); // January
+      targetDate.setDate(1); // 1st day
+      targetDate.setHours(0, 0, 0, 0); // 12:00 AM
+
+      // Countdown timer update every second
+      const countdownInterval = setInterval(() => {
+        const now = new Date().getTime(); // Current local time
+        const timeRemaining = targetDate.getTime() - now;
+
+        if (timeRemaining <= 0) {
+          // Stop the countdown
+          clearInterval(countdownInterval);
+
+          // Hide everything
+          document.querySelector(".card").style.display = "none";
+
+          // Create and display "2025"
+          const big2025 = document.createElement("div");
+          big2025.id = "big-2025";
+          big2025.innerHTML = "2025";
+          document.body.appendChild(big2025);
+
+          // Add animation class
+          big2025.classList.add("animate-2025");
+
+          return;
+        }
+
+        // Calculate days, hours, minutes, and seconds remaining
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        // Update countdown timer display
+        const countdownTimer = document.getElementById("countdown-timer");
+        countdownTimer.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    </script>
+  </body>
+</html>
